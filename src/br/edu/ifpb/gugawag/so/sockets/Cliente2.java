@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 public class Cliente2 {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         System.out.println("== Cliente ==");
 
         // configurando o socket
@@ -22,9 +22,37 @@ public class Cliente2 {
 
         // laço infinito do cliente
         while (true) {
-            Scanner teclado = new Scanner(System.in);
-            // escrevendo para o servidor
-            dos.writeUTF(teclado.nextLine());
+            System.out.println("================ NFS Options ================");
+            System.out.println("1 - listar conteúdo");
+            System.out.println("2 - renomear arquivo");
+            System.out.println("3 - cria um arquivo");
+            System.out.println("4 - remove um arquivo");
+
+            Scanner opcao = new Scanner(System.in);
+            String opcaoString = opcao.nextLine();
+
+            switch (opcaoString) {
+                case "2":
+                    System.out.println("Nome do arquivo a ser renomeado (sem extensão):");
+                    Scanner arquivoParaRenomear = new Scanner(System.in);
+                    String arquivoParaRenomearInput = arquivoParaRenomear.nextLine();
+
+                    System.out.println("Novo nome de arquivo (sem extensão):");
+                    Scanner novoNome = new Scanner(System.in);
+                    String novoNomeInput = novoNome.nextLine();
+
+                    dos.writeUTF(opcaoString + " " + arquivoParaRenomearInput + " " + novoNomeInput);
+                    break;
+                case "4":
+                    System.out.println("Nome do arquivo a ser removido (sem extensão):");
+                    Scanner arquivoParaDeletar = new Scanner(System.in);
+                    dos.writeUTF(opcaoString + " " + arquivoParaDeletar.nextLine());
+                    break;
+                default:
+                    // escrevendo para o servidor
+                    dos.writeUTF(opcaoString);
+            }
+
 
             // lendo o que o servidor enviou
             String mensagem = dis.readUTF();

@@ -5,11 +5,16 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Servidor2 {
+    public List<String> arquivos = new ArrayList<String>();
 
     public static void main(String[] args) throws IOException {
         System.out.println("== Servidor ==");
+        ArquivoService arquivoService = new ArquivoService();
 
         // Configurando o socket
         ServerSocket serverSocket = new ServerSocket(7001);
@@ -28,8 +33,28 @@ public class Servidor2 {
 
             String mensagem = dis.readUTF();
             System.out.println(mensagem);
+            String[] resposta = mensagem.split(" ");
 
-            dos.writeUTF("Li sua mensagem: " + mensagem);
+            switch (resposta[0]) {
+                case "1":
+                    dos.writeUTF("Listando Arquivos: " + arquivoService.readdir());
+                    break;
+                case "2":
+                    dos.writeUTF("Renomeando '" + resposta[1] + "' para '" + resposta[2] + "'");
+                    arquivoService.rename(resposta[1], resposta[2]);
+                    break;
+                case "3":
+                    dos.writeUTF("Criando Novo Arquivo: " + arquivoService.create());
+                    break;
+                case "4":
+                    dos.writeUTF("Apagando: " + resposta[1]);
+                    arquivoService.remove(resposta[1]);
+                    break;
+                default:
+                    dos.writeUTF("Comando não reconhecido");
+            }
+
+
         }
         /*
          * Observe o while acima. Perceba que primeiro se lê a mensagem vinda do cliente (linha 29, depois se escreve
